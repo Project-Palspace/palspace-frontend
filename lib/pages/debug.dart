@@ -38,8 +38,8 @@ class _DebugPageState extends ConsumerState<DebugPage> {
               apiClient
                   .register(
                     const RegisterBody(
-                      username: 'aeversil2',
-                      email: 'dunccan.jorit2@gmail.com',
+                      username: 'aeversil5',
+                      email: 'dunccan.jorit5@gmail.com',
                       password: 'admin123',
                     ),
                   )
@@ -47,31 +47,31 @@ class _DebugPageState extends ConsumerState<DebugPage> {
             },
             child: const Text('Test Register'),
           ),
-          ElevatedButton(
-            onPressed: () {
-              apiClient
-                  .login(
-                    const LoginBody(
-                      email: 'dunccan.jorit2@gmail.com',
-                      password: 'admin123',
-                    ),
-                  )
-                  .then((value) => log(value.toString()));
-            },
-            child: const Text('Test Login'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              apiClient
-                  .renew(
-                    const RenewBody(
-                        renewToken:
-                            'pJAIQSmhtnMm2bUC5sYsZZa5P8dKgJyMRO47QPGiqDaYyUq7bAkhlujpWykdzKviNBakIZjNZcJRdS76oNNlI46XfoI1pSacJYHzI4tQTfcdEvx41jpZSLMH6aDgc8zL'),
-                  )
-                  .then((value) => log(value.toString()));
-            },
-            child: const Text('Test Renew Token'),
-          ),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     apiClient
+          //         .login(
+          //           const LoginBody(
+          //             email: 'dunccan.jorit2@gmail.com',
+          //             password: 'admin123',
+          //           ),
+          //         )
+          //         .then((value) => log(value.toString()));
+          //   },
+          //   child: const Text('Test Login'),
+          // ),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     apiClient
+          //         .renew(
+          //           const RenewBody(
+          //               renewToken:
+          //                   'pJAIQSmhtnMm2bUC5sYsZZa5P8dKgJyMRO47QPGiqDaYyUq7bAkhlujpWykdzKviNBakIZjNZcJRdS76oNNlI46XfoI1pSacJYHzI4tQTfcdEvx41jpZSLMH6aDgc8zL'),
+          //         )
+          //         .then((value) => log(value.toString()));
+          //   },
+          //   child: const Text('Test Renew Token'),
+          // ),
         ],
       ),
     );

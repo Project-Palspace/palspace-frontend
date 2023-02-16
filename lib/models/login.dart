@@ -13,3 +13,16 @@ class LoginBody with _$LoginBody {
   factory LoginBody.fromJson(Map<String, dynamic> json) =>
       _$LoginBodyFromJson(json);
 }
+
+@freezed
+class LoginResponse with _$LoginResponse {
+  const factory LoginResponse({
+    required String bearerToken,
+    required String renewalToken,
+    required String expiresAt,
+    required String renewalExpiresAt,
+  }) = _LoginResponse;
+
+  factory LoginResponse.fromJson(Map<String, dynamic> json) =>
+      _$LoginResponseFromJson(json);
+}

@@ -7,16 +7,19 @@ import '../models/register.dart';
 import '../services/api_client.dart';
 import '../utils/constants.dart';
 
-final dioProvider = Provider(
-  (_) => Dio(
-    BaseOptions(
-      baseUrl: Constants.baseUrl,
-      contentType: "application/json",
-      connectTimeout: Constants.timeout,
-      receiveTimeout: Constants.timeout,
-    ),
-  )..interceptors.addAll([LoggerInterceptor()]),
-);
+final dioProvider = Provider((ref) => Dio(
+      BaseOptions(
+        baseUrl: Constants.baseUrl,
+        contentType: "application/json",
+        connectTimeout: Constants.timeout,
+        receiveTimeout: Constants.timeout,
+      ),
+    )
+      ..httpClientAdapter
+      ..interceptors.addAll([
+        LoggerInterceptor(),
+        // AccessInterceptor(ref),
+      ]));
 
 final apiClientProvider =
     Provider<ApiClient>((ref) => ApiClient(ref.read(dioProvider)));

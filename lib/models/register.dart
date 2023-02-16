@@ -15,16 +15,3 @@ class RegisterBody with _$RegisterBody {
   factory RegisterBody.fromJson(Map<String, dynamic> json) =>
       _$RegisterBodyFromJson(json);
 }
-
-@freezed
-class RegisterResponse with _$RegisterResponse {
-  const factory RegisterResponse({
-    required String bearerToken,
-    required String renewalToken,
-    required String expiresAt,
-    required String renewalExpiresAt,
-  }) = _RegisterResponse;
-
-  factory RegisterResponse.fromJson(Map<String, dynamic> json) =>
-      _$RegisterResponseFromJson(json);
-}
