@@ -5,7 +5,7 @@ class Constants {
   static String appName = "PalSpace";
 
   //Http Client
-  static String baseUrl = 'https://api.palspace.dev';
+  static String baseUrl = 'http://api.palspace.dev:8080';
   static Duration timeout = const Duration(seconds: 10);
 
   //Colors for theme

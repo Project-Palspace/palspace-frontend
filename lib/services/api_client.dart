@@ -1,8 +1,11 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tbd/models/api_client.dart';
+import 'package:tbd/providers/api_client.dart';
+import 'package:tbd/providers/auth.dart';
 import 'package:tbd/services/exceptions.dart';
 
 import '../models/login.dart';
@@ -19,37 +22,42 @@ class ApiClient {
     try {
       final response = await req;
 
-      return response.data;
+      return response.data ?? {};
     } on DioError catch (e) {
       final error = DioExceptions.fromDioError(e);
       return {'error': error};
     }
   }
 
-  Future<ApiResponse<LoginResponse>> register(RegisterBody body) async {
-    final response = await postReq(
+  Future<ApiResponse> register(RegisterBody body) async {
+    final responseJson = await postReq(
       _dio.post<void>(
         '/user/register',
         data: body.toJson(),
       ),
     );
 
-    return ApiResponse.fromJson(
-        response, (json) => LoginResponse.fromJson(json));
+    final response = ApiResponse.fromJson(
+        responseJson, (json) => LoginResponse.fromJson(json));
+
+    return response;
   }
 
-  Future<ApiResponse> login(LoginBody body) async {
-    final response = await postReq(
+  Future<ApiResponse<LoginResponse>> login(LoginBody body) async {
+    final responseJson = await postReq(
       _dio.post<void>(
         '/user/login',
         data: body.toJson(),
       ),
     );
-    return ApiResponse.fromJson(
-        response, (json) => LoginResponse.fromJson(json));
+
+    final response = ApiResponse.fromJson(
+        responseJson, (json) => LoginResponse.fromJson(json));
+
+    return response;
   }
 
-  Future<ApiResponse> renew(RenewBody body) async {
+  Future<ApiResponse<LoginResponse>> renew(RenewBody body) async {
     final response = await postReq(
       _dio.post<void>(
         '/user/renew',
@@ -69,80 +77,77 @@ class LoggerInterceptor extends Interceptor {
   }
 }
 
-// class AccessInterceptor extends QueuedInterceptor {
-//   final Ref _ref;
+class AccessInterceptor extends QueuedInterceptor {
+  final Ref _ref;
 
-//   AccessInterceptor(this._ref);
+  AccessInterceptor(this._ref);
 
-//   @override
-//   Future<void> onRequest(
-//     RequestOptions options,
-//     RequestInterceptorHandler handler,
-//   ) async {
-//     final tokenRepo = _ref.read(tokenRepositoryProvider);
-//     String? accessToken = await tokenRepo.fetchBearerToken();
+  @override
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final tokenRepo = _ref.read(tokenRepositoryProvider);
+    String? bearerToken = await tokenRepo.fetchBearerToken();
 
-//     // all requests made with [SecureHttp] require a accessToken
-//     // so we must reject this request
-//     if (accessToken == null) {
-//       handler.reject(DioError(requestOptions: options));
-//       return;
-//     }
+    Duration expiration = Duration.zero;
+    Duration refreshExpiration = Duration.zero;
+    final bearerTokenExp = await tokenRepo.fetchBearerTokenExpirationDateTime();
+    if (bearerTokenExp != null) {
+      expiration = DateTime.parse(bearerTokenExp).difference(DateTime.now());
+    }
+    final refreshTokenExp =
+        await tokenRepo.fetchBearerTokenExpirationDateTime();
+    if (refreshTokenExp != null) {
+      expiration = DateTime.parse(refreshTokenExp).difference(DateTime.now());
+    }
 
-//     Duration expiration = Duration.zero;
-//     final accessTokenExp = await tokenRepo.fetchBearerTokenExpirationDateTime();
-//     if (accessTokenExp != null) {
-//       expiration = DateTime.parse(accessTokenExp).difference(DateTime.now());
-//     }
+    if (refreshExpiration.inSeconds < 60) {
+      if (expiration.inSeconds < 60) {
+        String? refreshToken;
 
-//     if (expiration.inSeconds < 60) {
-//       String? renewalToken;
-//       try {
-//         renewalToken = await tokenRepo.fetchRenewalToken();
-//         LoginResponse? response;
-//         if (renewalToken != null) {
-//           response = await _ref
-//               .read(authStateNotifierProvider.notifier)
-//               .refresh(renewalToken);
-//         }
+        try {
+          refreshToken = await tokenRepo.fetchRefreshToken();
 
-//         if (response == null) {
-//           await _ref
-//               .read(authStateNotifierProvider.notifier)
-//               .logout(userInitiated: false);
-//           return handler.reject(DioError(requestOptions: options));
-//         }
+          LoginResponse? response;
+          if (refreshToken != null) {
+            final resp = await _ref
+                .read(apiClientProvider)
+                .renew(RenewBody(renewToken: refreshToken));
 
-//         await tokenRepo.saveBearerToken(response.accessToken);
-//         await tokenRepo.saveRenewalToken(response.renewalToken);
-//         await tokenRepo.saveBearerTokenExpirationDateTime(
-//           response.TokenExpirationDateTime,
-//         );
+            if (resp.error != null) {
+              _ref
+                  .read(authStateNotifierProvider.notifier)
+                  .logout(userInitiated: false);
+              return handler.reject(DioError(requestOptions: options));
+            }
+            if (resp.data != null) {
+              response = resp.data!;
+              await tokenRepo.saveBearerToken(response.token);
+              await tokenRepo.saveRefreshToken(response.refreshToken);
+              await tokenRepo.saveBearerTokenExpirationDateTime(
+                DateTime.parse(response.expiresAt!),
+              );
+              await tokenRepo.saveRefreshTokenExpirationDateTime(
+                DateTime.tryParse(response.refreshExpiresAt!),
+              );
+              bearerToken = response.token;
+            }
+          }
+        } catch (e) {
+          return handler.reject(DioError(requestOptions: options, error: e));
+        }
 
-//         accessToken = response.accessToken;
-//       } catch (e, s) {
-//         FirebaseCrashlytics.instance.recordError(
-//           e,
-//           s,
-//           reason: "New Auth Refresh Error",
-//           information: [
-//             StringProperty('refreshToken', renewalToken),
-//             StringProperty('accessToken', accessToken),
-//           ],
-//         );
-//         return handler.reject(DioError(requestOptions: options, error: e));
-//       }
-//     }
+        options.headers[HttpHeaders.authorizationHeader] =
+            "Bearer $bearerToken";
 
-//     // all requests made with [SecureHttp] require a accessToken
-//     // so we must reject this request
-//     if (accessToken == null) {
-//       handler.reject(DioError(requestOptions: options));
-//       return;
-//     }
+        return handler.next(options);
+      }
 
-//     options.headers[HttpHeaders.authorizationHeader] = "Bearer $accessToken";
-
-//     return handler.next(options);
-//   }
-// }
+      _ref
+          .read(authStateNotifierProvider.notifier)
+          .logout(userInitiated: false);
+      return handler.reject(DioError(requestOptions: options));
+    }
+  }
+}

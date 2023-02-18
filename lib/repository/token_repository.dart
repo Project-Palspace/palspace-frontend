@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 abstract class _SecureStoreKeys {
-  static const String renewalToken = "renewalToken";
+  static const String refreshToken = "refreshToken";
   static const String bearerToken = "bearerToken";
   static const String expiresAt = "expiresAt";
-  static const String renewalExpiresAt = "renewalExpiresAt";
+  static const String refreshExpiresAt = "refreshExpiresAt";
 }
 
 final tokenRepositoryProvider = Provider(
@@ -24,12 +24,12 @@ class TokenRepository {
     return _storage.read(key: _SecureStoreKeys.expiresAt);
   }
 
-  Future<String?> fetchRenewalToken() async {
-    return _storage.read(key: _SecureStoreKeys.renewalToken);
+  Future<String?> fetchRefreshToken() async {
+    return _storage.read(key: _SecureStoreKeys.refreshToken);
   }
 
-  Future<String?> fetchRenewalTokenExpirationDateTime() async {
-    return _storage.read(key: _SecureStoreKeys.renewalExpiresAt);
+  Future<String?> fetchRefreshTokenExpirationDateTime() async {
+    return _storage.read(key: _SecureStoreKeys.refreshExpiresAt);
   }
 
   Future<void> saveBearerToken(String? bearerToken) async {
@@ -48,19 +48,19 @@ class TokenRepository {
     );
   }
 
-  Future<void> saveRenewalToken(String? renewalToken) async {
+  Future<void> saveRefreshToken(String? refreshToken) async {
     await _storage.write(
-      key: _SecureStoreKeys.renewalToken,
-      value: renewalToken,
+      key: _SecureStoreKeys.refreshToken,
+      value: refreshToken,
     );
   }
 
-  Future<void> saveRenewalTokenExpirationDateTime(
-    DateTime? renewalTokenExpirationDate,
+  Future<void> saveRefreshTokenExpirationDateTime(
+    DateTime? refreshTokenExpirationDate,
   ) async {
     await _storage.write(
-      key: _SecureStoreKeys.renewalExpiresAt,
-      value: renewalTokenExpirationDate?.toIso8601String(),
+      key: _SecureStoreKeys.refreshExpiresAt,
+      value: refreshTokenExpirationDate?.toIso8601String(),
     );
   }
 
@@ -68,8 +68,8 @@ class TokenRepository {
     await Future.wait([
       saveBearerToken(null),
       saveBearerTokenExpirationDateTime(null),
-      saveRenewalToken(null),
-      saveRenewalTokenExpirationDateTime(null),
+      saveRefreshToken(null),
+      saveRefreshTokenExpirationDateTime(null),
     ]);
   }
 }

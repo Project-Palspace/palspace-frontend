@@ -34,9 +34,9 @@ class _LoginState extends State<Login> {
             SizedBox(
               height: 170.0,
               width: MediaQuery.of(context).size.width,
-              child: Image.asset(
-                'assets/images/login.png',
-              ),
+              // child: Image.asset(
+              //   'assets/images/login.png',
+              // ),
             ),
             const SizedBox(height: 10.0),
             const Center(
