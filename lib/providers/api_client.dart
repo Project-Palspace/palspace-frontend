@@ -19,11 +19,21 @@ final dioProvider = Provider((ref) => Dio(
       ..httpClientAdapter
       ..interceptors.addAll([
         LoggerInterceptor(),
-        // AccessInterceptor(ref),
+        AccessInterceptor(ref),
       ]));
 
 final apiClientProvider =
     Provider<ApiClient>((ref) => ApiClient(ref.read(dioProvider)));
+
+final logoutProvider = FutureProvider.autoDispose<ApiResponse>(
+  (ref) async {
+    final apiService = ref.watch(apiClientProvider);
+    final response = await apiService.logout();
+    return response;
+  },
+  name: 'logoutProvider',
+  dependencies: [apiClientProvider],
+);
 
 final registerProvider =
     FutureProvider.family.autoDispose<ApiResponse, RegisterBody>(

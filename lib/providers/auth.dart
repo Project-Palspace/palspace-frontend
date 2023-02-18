@@ -95,6 +95,13 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   Future<void> logout({required bool userInitiated}) async {
     _assertInitialized();
 
+    try {
+      await _logout();
+    } on DioExceptions catch (e) {
+      if (e.status != 504) {
+        state = AuthState.loggedOut(userInitiated: userInitiated);
+      }
+    }
     state = AuthState.loggedOut(userInitiated: userInitiated);
     await Future.wait<void>([
       _tokenRepo.deleteTokensData(),
@@ -114,6 +121,23 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> _logout() async {
+    try {
+      await _ref.read(
+        logoutProvider.future,
+      );
+
+      // if (result.error == null) {
+      //   //TODO: Navigate to email verification screen
+      // } else {
+      //   log(result.error!.message);
+      // }
+    } on PlatformException catch (e) {
+      if (e.message?.toLowerCase().contains("cancelled") ?? false) return;
+      rethrow;
+    } catch (_) {}
+  }
+
   Future<void> _signUp(RegisterBody body) async {
     try {
       final result = await _ref.read(
@@ -121,7 +145,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       );
 
       if (result.error == null) {
-        _saveTokens(result.data!);
+        //TODO: Navigate to email verification screen
       } else {
         log(result.error!.message);
       }
@@ -161,7 +185,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     await tokenRepo.saveRefreshToken(refreshToken);
     await tokenRepo.saveBearerTokenExpirationDateTime(
         exp != null ? DateTime.parse(exp) : null);
-    await tokenRepo.saveBearerTokenExpirationDateTime(
+    await tokenRepo.saveRefreshTokenExpirationDateTime(
         refreshExp != null ? DateTime.parse(refreshExp) : null);
   }
 }

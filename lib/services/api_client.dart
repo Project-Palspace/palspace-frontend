@@ -18,7 +18,7 @@ class ApiClient {
 
   final Dio _dio;
 
-  Future<Map<String, dynamic>> postReq(Future<Response> req) async {
+  Future<Map<String, dynamic>> sentReq(Future<Response> req) async {
     try {
       final response = await req;
 
@@ -29,22 +29,33 @@ class ApiClient {
     }
   }
 
+  Future<ApiResponse> logout() async {
+    final responseJson = await sentReq(
+      _dio.get<void>(
+        '/user/manage/logout',
+      ),
+    );
+
+    final response = ApiResponse.fromJson(responseJson, (json) => json);
+
+    return response;
+  }
+
   Future<ApiResponse> register(RegisterBody body) async {
-    final responseJson = await postReq(
+    final responseJson = await sentReq(
       _dio.post<void>(
         '/user/register',
         data: body.toJson(),
       ),
     );
 
-    final response = ApiResponse.fromJson(
-        responseJson, (json) => LoginResponse.fromJson(json));
+    final response = ApiResponse.fromJson(responseJson, (json) => json);
 
     return response;
   }
 
   Future<ApiResponse<LoginResponse>> login(LoginBody body) async {
-    final responseJson = await postReq(
+    final responseJson = await sentReq(
       _dio.post<void>(
         '/user/login',
         data: body.toJson(),
@@ -58,7 +69,7 @@ class ApiClient {
   }
 
   Future<ApiResponse<LoginResponse>> renew(RenewBody body) async {
-    final response = await postReq(
+    final response = await sentReq(
       _dio.post<void>(
         '/user/renew',
         data: body.toJson(),
@@ -89,26 +100,32 @@ class AccessInterceptor extends QueuedInterceptor {
   ) async {
     final tokenRepo = _ref.read(tokenRepositoryProvider);
     String? bearerToken = await tokenRepo.fetchBearerToken();
+    String? bearerExp = await tokenRepo.fetchBearerTokenExpirationDateTime();
 
-    Duration expiration = Duration.zero;
-    Duration refreshExpiration = Duration.zero;
-    final bearerTokenExp = await tokenRepo.fetchBearerTokenExpirationDateTime();
-    if (bearerTokenExp != null) {
-      expiration = DateTime.parse(bearerTokenExp).difference(DateTime.now());
-    }
-    final refreshTokenExp =
-        await tokenRepo.fetchBearerTokenExpirationDateTime();
-    if (refreshTokenExp != null) {
-      expiration = DateTime.parse(refreshTokenExp).difference(DateTime.now());
-    }
+    String? refreshToken = await tokenRepo.fetchRefreshToken();
+    String? refreshExp = await tokenRepo.fetchRefreshTokenExpirationDateTime();
 
-    if (refreshExpiration.inSeconds < 60) {
+    if (bearerToken != null) {
+      Duration expiration = Duration.zero;
+      Duration refreshExpiration = Duration.zero;
+      if (bearerExp != null) {
+        expiration = DateTime.parse(bearerExp).difference(DateTime.now());
+      }
+
+      if (refreshExp != null) {
+        refreshExpiration =
+            DateTime.parse(refreshExp).difference(DateTime.now());
+      }
+
+      if (refreshExpiration.inSeconds < 60) {
+        _ref
+            .read(authStateNotifierProvider.notifier)
+            .logout(userInitiated: false);
+        return handler.reject(DioError(requestOptions: options));
+      }
+
       if (expiration.inSeconds < 60) {
-        String? refreshToken;
-
         try {
-          refreshToken = await tokenRepo.fetchRefreshToken();
-
           LoginResponse? response;
           if (refreshToken != null) {
             final resp = await _ref
@@ -137,17 +154,10 @@ class AccessInterceptor extends QueuedInterceptor {
         } catch (e) {
           return handler.reject(DioError(requestOptions: options, error: e));
         }
-
-        options.headers[HttpHeaders.authorizationHeader] =
-            "Bearer $bearerToken";
-
-        return handler.next(options);
       }
-
-      _ref
-          .read(authStateNotifierProvider.notifier)
-          .logout(userInitiated: false);
-      return handler.reject(DioError(requestOptions: options));
+      options.headers[HttpHeaders.authorizationHeader] = "Bearer $bearerToken";
+      return handler.next(options);
     }
+    return handler.next(options);
   }
 }

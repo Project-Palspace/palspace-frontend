@@ -14,7 +14,7 @@ class DioExceptions implements Exception {
       case DioErrorType.sendTimeout:
       case DioErrorType.receiveTimeout:
         message = "Connection has timed out.";
-        status = 400;
+        status = 504;
         break;
       case DioErrorType.badResponse:
         message = _handleError(
