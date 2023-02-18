@@ -25,12 +25,12 @@ class LandingState extends State<Landing> {
               alignment: Alignment.center,
               child: Padding(
                 padding: const EdgeInsets.only(left: 10.0),
-                child: Image.asset(
-                  'assets/images/new1.png',
-                  height: 200.0,
-                  width: 200.0,
-                  fit: BoxFit.cover,
-                ),
+                // child: Image.asset(
+                //   'assets/images/new1.png',
+                //   height: 200.0,
+                //   width: 200.0,
+                //   fit: BoxFit.cover,
+                // ),
               ),
             ),
             Text(

@@ -6,6 +6,9 @@ import 'package:tbd/models/login.dart';
 import 'package:tbd/models/register.dart';
 import 'package:tbd/models/renew.dart';
 import 'package:tbd/providers/api_client.dart';
+import 'package:tbd/providers/auth.dart';
+
+import '../repository/token_repository.dart';
 
 class DebugPage extends ConsumerStatefulWidget {
   const DebugPage({super.key});
@@ -17,7 +20,8 @@ class DebugPage extends ConsumerStatefulWidget {
 class _DebugPageState extends ConsumerState<DebugPage> {
   @override
   Widget build(BuildContext context) {
-    final apiClient = ref.read(apiClientProvider);
+    final authState = ref.watch(authStateNotifierProvider.notifier);
+    final isSignedIn = ref.watch(authStateNotifierProvider).isSignedIn;
 
     return Scaffold(
       appBar: AppBar(
@@ -33,33 +37,34 @@ class _DebugPageState extends ConsumerState<DebugPage> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 24, 16, 124),
         children: [
+          Text(
+            "Is Signed In: $isSignedIn",
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           ElevatedButton(
-            onPressed: () {
-              apiClient
-                  .register(
-                    const RegisterBody(
-                      username: 'aeversil5',
-                      email: 'dunccan.jorit5@gmail.com',
-                      password: 'admin123',
-                    ),
-                  )
-                  .then((value) => log(value.toString()));
-            },
+            onPressed: () => authState.signUp(
+              const RegisterBody(
+                  username: 'aeversil',
+                  email: 'dunccan.jorit@gmail.com',
+                  password: 'admin123'),
+            ),
             child: const Text('Test Register'),
           ),
-          // ElevatedButton(
-          //   onPressed: () {
-          //     apiClient
-          //         .login(
-          //           const LoginBody(
-          //             email: 'dunccan.jorit2@gmail.com',
-          //             password: 'admin123',
-          //           ),
-          //         )
-          //         .then((value) => log(value.toString()));
-          //   },
-          //   child: const Text('Test Login'),
-          // ),
+          ElevatedButton(
+            onPressed: () => authState.signIn(
+              const LoginBody(
+                email: 'dunccan.jorit@gmail.com',
+                password: 'admin123',
+              ),
+            ),
+            child: const Text('Test Login'),
+          ),
+          ElevatedButton(
+            onPressed: () => authState.logout(userInitiated: true),
+            child: const Text('Logout'),
+          ),
           // ElevatedButton(
           //   onPressed: () {
           //     apiClient

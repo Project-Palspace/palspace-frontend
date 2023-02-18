@@ -17,10 +17,10 @@ class LoginBody with _$LoginBody {
 @freezed
 class LoginResponse with _$LoginResponse {
   const factory LoginResponse({
-    required String bearerToken,
-    required String renewalToken,
-    required String expiresAt,
-    required String renewalExpiresAt,
+    String? token,
+    String? refreshToken,
+    String? expiresAt,
+    String? refreshExpiresAt,
   }) = _LoginResponse;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) =>

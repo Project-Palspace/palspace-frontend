@@ -17,7 +17,7 @@ class ApiResponse<T> extends Equatable {
   ) {
     return ApiResponse<T>(
       error: map['error'],
-      data: map['data'] != null ? create(map['data']) : null,
+      data: create(map),
     );
   }
 
