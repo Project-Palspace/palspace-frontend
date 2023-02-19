@@ -5,12 +5,15 @@ import 'package:tbd/pages/debug.dart';
 
 import '../utils/constants.dart';
 
-class Feeds extends StatefulWidget {
+class FeedsView extends StatefulWidget {
+  const FeedsView({super.key});
+
   @override
-  _FeedsState createState() => _FeedsState();
+  FeedsViewState createState() => FeedsViewState();
 }
 
-class _FeedsState extends State<Feeds> with AutomaticKeepAliveClientMixin {
+class FeedsViewState extends State<FeedsView>
+    with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   int page = 5;

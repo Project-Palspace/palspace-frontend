@@ -1,13 +1,17 @@
 import 'dart:developer';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tbd/models/login.dart';
 import 'package:tbd/models/register.dart';
 import 'package:tbd/models/renew.dart';
 import 'package:tbd/providers/api_client.dart';
+import 'package:tbd/providers/app.dart';
 import 'package:tbd/providers/auth.dart';
+import 'package:tbd/routes/router.gr.dart';
 
+import '../main.dart';
 import '../repository/token_repository.dart';
 
 class DebugPage extends ConsumerStatefulWidget {
@@ -38,6 +42,12 @@ class _DebugPageState extends ConsumerState<DebugPage> {
         padding: const EdgeInsets.fromLTRB(16, 24, 16, 124),
         children: [
           Text(
+            "Did Auth Init: ${authState.initialized}",
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Text(
             "Is Signed In: $isSignedIn",
             style: const TextStyle(
               fontWeight: FontWeight.w600,
@@ -64,6 +74,11 @@ class _DebugPageState extends ConsumerState<DebugPage> {
           ElevatedButton(
             onPressed: () => authState.logout(userInitiated: true),
             child: const Text('Logout'),
+          ),
+
+          ElevatedButton(
+            onPressed: () => context.router.navigate(const Auth()),
+            child: const Text('Navigate'),
           ),
           // ElevatedButton(
           //   onPressed: () {

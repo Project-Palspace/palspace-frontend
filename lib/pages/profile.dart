@@ -5,16 +5,16 @@ import 'package:ionicons/ionicons.dart';
 import 'package:tbd/components/profile_container.dart';
 import 'package:tbd/utils/constants.dart';
 
-class Profile extends StatefulWidget {
+class ProfileView extends StatefulWidget {
   final profileId;
 
-  Profile({this.profileId});
+  ProfileView({this.profileId});
 
   @override
-  _ProfileState createState() => _ProfileState();
+  _ProfileViewState createState() => _ProfileViewState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileViewState extends State<ProfileView> {
   // User? user;
   bool isLoading = false;
   int postCount = 0;

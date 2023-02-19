@@ -51,13 +51,13 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   final TokenRepository _tokenRepo;
   final Ref _ref;
 
-  bool _initialized = false;
+  bool initialized = false;
 
   bool get isSignedIn => state.isSignedIn;
 
   Future<void> initialize() async {
-    if (_initialized) return;
-    _initialized = true;
+    if (initialized) return;
+    initialized = true;
 
     final accessToken = await _tokenRepo.fetchBearerToken();
     if (accessToken == null) {
@@ -109,7 +109,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   }
 
   void _assertInitialized() {
-    assert(_initialized, "Call initialize() first.");
+    assert(initialized, "Call initialize() first.");
   }
 
   Future<void> _afterSignIn() async {

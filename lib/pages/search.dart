@@ -11,12 +11,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import '../utils/constants.dart';
 import '../widgets/indicators.dart';
 
-class Search extends StatefulHookWidget {
+class SearchView extends StatefulHookWidget {
+  const SearchView({super.key});
+
   @override
-  _SearchState createState() => _SearchState();
+  SearchState createState() => SearchState();
 }
 
-class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
+class SearchState extends State<SearchView> with AutomaticKeepAliveClientMixin {
   // User? user;
   // TextEditingController searchController = TextEditingController();
   // FirebaseAuth auth = FirebaseAuth.instance;

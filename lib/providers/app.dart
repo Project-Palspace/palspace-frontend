@@ -2,6 +2,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:tbd/routes/guards.dart';
+import 'package:tbd/routes/router.dart';
+
+import '../main.dart';
+import '../routes/router.gr.dart';
 
 final themeController = ChangeNotifierProvider<ThemeController>((ref) {
   final database = ref.watch(databaseService);
@@ -24,6 +29,10 @@ class ThemeController with ChangeNotifier {
     notifyListeners();
   }
 }
+
+// final routerProvider = Provider<AppRouter>((ref) {
+//   return AppRouter(authGuard: AuthGuard(container: container));
+// });
 
 //** DATABASE CLASS */
 final databaseService = Provider<DatabaseService>((_) => DatabaseService());

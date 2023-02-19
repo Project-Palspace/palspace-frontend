@@ -6,19 +6,23 @@ import 'package:loading_overlay/loading_overlay.dart';
 
 import '../../components/password_text_field.dart';
 import '../../components/text_form_builder.dart';
+import '../../providers/auth.dart';
 import '../../utils/validation.dart';
 import '../../widgets/indicators.dart';
 import '../register/register.dart';
 
-class Login extends StatefulWidget {
+class LoginView extends ConsumerStatefulWidget {
+  const LoginView({super.key});
+
   @override
-  _LoginState createState() => _LoginState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginViewState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginViewState extends ConsumerState<LoginView> {
   @override
   Widget build(BuildContext context) {
     // LoginViewModel viewModel = Provider.of<LoginViewModel>(context);
+    var authState = ref.read(authStateNotifierProvider.notifier);
 
     return LoadingOverlay(
       progressIndicator: circularProgress(context),
@@ -50,7 +54,7 @@ class _LoginState extends State<Login> {
             ),
             Center(
               child: Text(
-                'Log into your account and get started!',
+                'Log into your account and get started! Logged In: ${authState.isSignedIn}',
                 style: TextStyle(
                   fontSize: 12.0,
                   fontWeight: FontWeight.w300,
@@ -70,7 +74,7 @@ class _LoginState extends State<Login> {
                   onTap: () {
                     Navigator.of(context).push(
                       CupertinoPageRoute(
-                        builder: (_) => Register(),
+                        builder: (_) => RegisterView(),
                       ),
                     );
                   },

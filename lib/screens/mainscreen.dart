@@ -8,25 +8,27 @@ import '../pages/feeds.dart';
 import '../pages/profile.dart';
 import '../pages/search.dart';
 
-class TabScreen extends StatefulWidget {
+class TabScreenView extends StatefulWidget {
+  const TabScreenView({super.key});
+
   @override
-  _TabScreenState createState() => _TabScreenState();
+  TabScreenViewState createState() => TabScreenViewState();
 }
 
-class _TabScreenState extends State<TabScreen> {
+class TabScreenViewState extends State<TabScreenView> {
   int _page = 0;
 
   List pages = [
     {
       'title': 'Home',
       'icon': Ionicons.home,
-      'page': Feeds(),
+      'page': FeedsView(),
       'index': 0,
     },
     {
       'title': 'Search',
       'icon': Ionicons.search,
-      'page': Search(),
+      'page': SearchView(),
       'index': 1,
     },
     {
@@ -45,7 +47,7 @@ class _TabScreenState extends State<TabScreen> {
       'title': 'Profile',
       'icon': CupertinoIcons.person_fill,
       // 'page': Profile(profileId: firebaseAuth.currentUser!.uid),
-      'page': Profile(),
+      'page': ProfileView(),
       'index': 4,
     },
   ];

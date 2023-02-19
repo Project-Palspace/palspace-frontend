@@ -55,7 +55,7 @@ class LandingState extends State<Landing> {
                 onTap: () {
                   Navigator.of(context).pushReplacement(
                     CupertinoPageRoute(
-                      builder: (_) => Login(),
+                      builder: (_) => LoginView(),
                     ),
                   );
                 },
@@ -89,7 +89,7 @@ class LandingState extends State<Landing> {
                 onTap: () {
                   Navigator.of(context).pushReplacement(
                     CupertinoPageRoute(
-                      builder: (_) => Login(),
+                      builder: (_) => LoginView(),
                     ),
                   );
                 },

@@ -9,12 +9,14 @@ import '../../utils/constants.dart';
 import '../../utils/validation.dart';
 import '../../widgets/indicators.dart';
 
-class Register extends StatefulWidget {
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
+
   @override
-  _RegisterState createState() => _RegisterState();
+  RegisterViewState createState() => RegisterViewState();
 }
 
-class _RegisterState extends State<Register> {
+class RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     // RegisterViewModel viewModel = Provider.of<RegisterViewModel>(context);
