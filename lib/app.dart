@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tbd/auth/login/login.dart';
-import 'package:tbd/landing/landing_page.dart';
-import 'package:tbd/providers/auth.dart';
 import 'package:tbd/routes/guards.dart';
 import 'package:tbd/utils/constants.dart';
+import 'package:tbd/utils/device_info.dart';
 
-import 'main.dart';
 import 'providers/app.dart';
 import 'routes/router.gr.dart';
-import 'screens/mainscreen.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -33,16 +29,7 @@ class _AppState extends ConsumerState<App> {
   @override
   Widget build(BuildContext context) {
     final mode = ref.watch(themeController).theme;
-    // final router = ref.watch(routerProvider);
-
-    final appRouter = AppRouter(authGuard: AuthGuard(ref: ref));
-    // final authState = ref.watch(authStateNotifierProvider.notifier);
-
-    // try {
-    //   authState.initialize;
-    // } catch (e) {
-    //   print(e);
-    // }
+    final appRouter = ref.watch(routerProvider);
 
     return MaterialApp.router(
       title: Constants.appName,
@@ -50,18 +37,6 @@ class _AppState extends ConsumerState<App> {
       routeInformationParser: appRouter.defaultRouteParser(),
       routeInformationProvider: appRouter.routeInfoProvider(),
       routerDelegate: appRouter.delegate(),
-      // home:
     );
   }
 }
-
-// class InitialView extends ConsumerWidget {
-//   const InitialView({super.key});
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final authState = ref.watch(authStateNotifierProvider.notifier);
-//     authState.initialize;
-//     return authState.isSignedIn ? const TabScreenView() : const LoginView();
-//   }
-// }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tbd/routes/guards.dart';
 import 'package:tbd/routes/router.dart';
+import 'package:tbd/utils/device_info.dart';
 
 import '../main.dart';
 import '../routes/router.gr.dart';
@@ -30,9 +31,13 @@ class ThemeController with ChangeNotifier {
   }
 }
 
-// final routerProvider = Provider<AppRouter>((ref) {
-//   return AppRouter(authGuard: AuthGuard(container: container));
-// });
+final routerProvider = Provider<AppRouter>((ref) {
+  return AppRouter(authGuard: AuthGuard(ref: ref));
+});
+
+final deviceInfoProvider = Provider<DeviceInfo>((ref) {
+  return DeviceInfo();
+});
 
 //** DATABASE CLASS */
 final databaseService = Provider<DatabaseService>((_) => DatabaseService());

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Constants {
   //App related strings
-  static String appName = "PalSpace";
+  static String appName = "Palspace";
 
   //Http Client
   static String baseUrl = 'http://api.palspace.dev:8080';

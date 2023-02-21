@@ -5,9 +5,9 @@ import 'package:tbd/routes/router.gr.dart';
 import '../providers/auth.dart';
 
 class AuthGuard extends AutoRouteGuard {
-  AuthGuard({required WidgetRef ref}) : _ref = ref;
+  AuthGuard({required ProviderRef ref}) : _ref = ref;
 
-  final WidgetRef _ref;
+  final ProviderRef _ref;
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {

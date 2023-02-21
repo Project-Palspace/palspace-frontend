@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tbd/models/api_client.dart';
 import 'package:tbd/providers/api_client.dart';
 import 'package:tbd/providers/auth.dart';
 import 'package:tbd/services/exceptions.dart';
+import 'package:tbd/utils/device_info.dart';
 
 import '../models/login.dart';
 import '../models/register.dart';
@@ -17,6 +19,12 @@ class ApiClient {
   ApiClient(this._dio);
 
   final Dio _dio;
+
+  static Future<String> buildUserAgentHeader() async {
+    final pckgInfo = await PackageInfo.fromPlatform();
+    final deviceInfo = await DeviceInfo().getDeviceInfo();
+    return "Palspace / ${pckgInfo.version} / $deviceInfo";
+  }
 
   Future<Map<String, dynamic>> sentReq(Future<Response> req) async {
     try {
@@ -68,6 +76,19 @@ class ApiClient {
     return response;
   }
 
+  Future<ApiResponse<LoginResponse>> verifyEmail(String token) async {
+    final responseJson = await sentReq(
+      _dio.get<void>('/user/verify-email', queryParameters: {
+        't': token,
+      }),
+    );
+
+    final response = ApiResponse.fromJson(
+        responseJson, (json) => LoginResponse.fromJson(json));
+
+    return response;
+  }
+
   Future<ApiResponse<LoginResponse>> renew(RenewBody body) async {
     final response = await sentReq(
       _dio.post<void>(
@@ -83,7 +104,7 @@ class ApiClient {
 class LoggerInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    log('${options.method} ${options.uri}');
+    log('${options.method} ${options.uri}\n ${options.data}');
     return handler.next(options);
   }
 }
@@ -158,6 +179,19 @@ class AccessInterceptor extends QueuedInterceptor {
       options.headers[HttpHeaders.authorizationHeader] = "Bearer $bearerToken";
       return handler.next(options);
     }
+    return handler.next(options);
+  }
+}
+
+class _AgentInterceptor extends Interceptor {
+  @override
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    // Add User-Agent header with app and device information
+    options.headers[HttpHeaders.userAgentHeader] =
+        await ApiClient.buildUserAgentHeader();
     return handler.next(options);
   }
 }

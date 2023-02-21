@@ -57,6 +57,17 @@ final loginProvider =
   dependencies: [apiClientProvider],
 );
 
+final verifyEmailProvider =
+    FutureProvider.family.autoDispose<ApiResponse<LoginResponse?>, String>(
+  (ref, query) {
+    final apiService = ref.watch(apiClientProvider);
+
+    return apiService.verifyEmail(query);
+  },
+  name: 'verifyEmailProvider',
+  dependencies: [apiClientProvider],
+);
+
 final renewProvider = FutureProvider.autoDispose(
   (ref) {
     final apiService = ref.watch(apiClientProvider);

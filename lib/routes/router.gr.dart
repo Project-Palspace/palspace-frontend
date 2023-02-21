@@ -94,10 +94,10 @@ class AppRouter extends _i9.RootStackRouter {
         child: const _i6.FeedsView(),
       );
     },
-    DebugPage.name: (routeData) {
+    DebugRoute.name: (routeData) {
       return _i9.AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const _i7.DebugPage(),
+        child: const _i7.DebugView(),
       );
     },
     SearchRoute.name: (routeData) {
@@ -162,7 +162,7 @@ class AppRouter extends _i9.RootStackRouter {
               guards: [authGuard],
               children: [
                 _i9.RouteConfig(
-                  DebugPage.name,
+                  DebugRoute.name,
                   path: '',
                   parent: NotificationsRouter.name,
                 )
@@ -175,7 +175,7 @@ class AppRouter extends _i9.RootStackRouter {
               guards: [authGuard],
               children: [
                 _i9.RouteConfig(
-                  DebugPage.name,
+                  DebugRoute.name,
                   path: '',
                   parent: MyProfileRouter.name,
                 )
@@ -326,15 +326,15 @@ class FeedsRoute extends _i9.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i7.DebugPage]
-class DebugPage extends _i9.PageRouteInfo<void> {
-  const DebugPage()
+/// [_i7.DebugView]
+class DebugRoute extends _i9.PageRouteInfo<void> {
+  const DebugRoute()
       : super(
-          DebugPage.name,
+          DebugRoute.name,
           path: '',
         );
 
-  static const String name = 'DebugPage';
+  static const String name = 'DebugRoute';
 }
 
 /// generated route for

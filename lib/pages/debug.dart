@@ -10,18 +10,19 @@ import 'package:tbd/providers/api_client.dart';
 import 'package:tbd/providers/app.dart';
 import 'package:tbd/providers/auth.dart';
 import 'package:tbd/routes/router.gr.dart';
+import 'package:tbd/utils/device_info.dart';
 
 import '../main.dart';
 import '../repository/token_repository.dart';
 
-class DebugPage extends ConsumerStatefulWidget {
-  const DebugPage({super.key});
+class DebugView extends ConsumerStatefulWidget {
+  const DebugView({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _DebugPageState();
 }
 
-class _DebugPageState extends ConsumerState<DebugPage> {
+class _DebugPageState extends ConsumerState<DebugView> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authStateNotifierProvider.notifier);
@@ -75,23 +76,17 @@ class _DebugPageState extends ConsumerState<DebugPage> {
             onPressed: () => authState.logout(userInitiated: true),
             child: const Text('Logout'),
           ),
-
           ElevatedButton(
             onPressed: () => context.router.navigate(const Auth()),
             child: const Text('Navigate'),
           ),
-          // ElevatedButton(
-          //   onPressed: () {
-          //     apiClient
-          //         .renew(
-          //           const RenewBody(
-          //               renewToken:
-          //                   'pJAIQSmhtnMm2bUC5sYsZZa5P8dKgJyMRO47QPGiqDaYyUq7bAkhlujpWykdzKviNBakIZjNZcJRdS76oNNlI46XfoI1pSacJYHzI4tQTfcdEvx41jpZSLMH6aDgc8zL'),
-          //         )
-          //         .then((value) => log(value.toString()));
-          //   },
-          //   child: const Text('Test Renew Token'),
-          // ),
+          ElevatedButton(
+            onPressed: () async {
+              final info = await DeviceInfo().getDeviceInfo();
+              print(info);
+            },
+            child: const Text('Get DeviceInfo'),
+          ),
         ],
       ),
     );

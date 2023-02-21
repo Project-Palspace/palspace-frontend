@@ -62,7 +62,7 @@ import '../screens/mainscreen.dart';
           children: <AutoRoute>[
             AutoRoute(
               path: '',
-              page: DebugPage, //TODO: Add page
+              page: DebugView, //TODO: Add page
             ),
           ],
         ),
@@ -74,7 +74,7 @@ import '../screens/mainscreen.dart';
           children: <AutoRoute>[
             AutoRoute(
               path: '',
-              page: DebugPage, //TODO: add page
+              page: DebugView, //TODO: add page
             ),
           ],
         ),

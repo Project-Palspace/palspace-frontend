@@ -58,7 +58,7 @@ class FeedsViewState extends State<FeedsView>
                 context,
                 CupertinoPageRoute(
                   // builder: (_) => Chats(),
-                  builder: (_) => const DebugPage(),
+                  builder: (_) => const DebugView(),
                 ),
               );
             },

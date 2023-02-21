@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'custom_card.dart';
 
-class TextFormBuilder extends StatefulWidget {
+class VerificationFormBuilder extends StatefulWidget {
   final String? initialValue;
   final bool? enabled;
   final bool autocorrect;
@@ -18,7 +18,7 @@ class TextFormBuilder extends StatefulWidget {
   final IconData? prefix;
   final IconData? suffix;
 
-  const TextFormBuilder({
+  const VerificationFormBuilder({
     Key? key,
     this.prefix,
     this.suffix,
@@ -39,10 +39,10 @@ class TextFormBuilder extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  TextFormBuilderState createState() => TextFormBuilderState();
+  VerificationFormBuilderState createState() => VerificationFormBuilderState();
 }
 
-class TextFormBuilderState extends State<TextFormBuilder> {
+class VerificationFormBuilderState extends State<VerificationFormBuilder> {
   String? error;
 
   @override

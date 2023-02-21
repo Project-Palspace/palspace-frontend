@@ -57,6 +57,11 @@ class DioExceptions implements Exception {
             return error['error'];
           }
           return 'Bad request';
+        case 401:
+          if (error is Map && error.isNotEmpty) {
+            return error['error'];
+          }
+          return 'Unauthorized';
         case 403:
           return 'This is a private account!';
         case 404:

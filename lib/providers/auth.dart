@@ -6,6 +6,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tbd/models/login.dart';
 import 'package:tbd/models/register.dart';
 import 'package:tbd/providers/api_client.dart';
+import 'package:tbd/providers/app.dart';
+import 'package:tbd/routes/router.gr.dart';
 
 import '../repository/token_repository.dart';
 import '../services/exceptions.dart';
@@ -73,7 +75,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
     try {
       await _signUp(body);
-      await _afterSignIn();
+      // await _afterSignIn();
     } on PlatformException catch (e) {
       log('Error occured when signing up: $e');
       state = const AuthState.loggedOut(userInitiated: false);
@@ -92,11 +94,23 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> verifyEmail(String token) async {
+    _assertInitialized();
+
+    try {
+      await _verifyEmail(token);
+      // await _afterSignIn();
+    } on PlatformException catch (e) {
+      log('Error occured when signing in: $e');
+      state = const AuthState.loggedOut(userInitiated: false);
+    }
+  }
+
   Future<void> logout({required bool userInitiated}) async {
     _assertInitialized();
 
     try {
-      await _logout();
+      await _logout(userInitiated);
     } on DioExceptions catch (e) {
       if (e.status != 504) {
         state = AuthState.loggedOut(userInitiated: userInitiated);
@@ -115,16 +129,25 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   Future<void> _afterSignIn() async {
     try {
       // final profile = await getProfile(ref: _ref);
-      state = const AuthState.loggedIn();
+      // state = const AuthState.loggedIn();
+      print('signed in flow');
     } on DioExceptions {
       state = const AuthState.loggedOut(userInitiated: false);
     }
   }
 
-  Future<void> _logout() async {
+  Future<void> _logout(userInitiated) async {
+    final router = _ref.watch(routerProvider);
     try {
-      await _ref.read(
+      await _ref
+          .read(
         logoutProvider.future,
+      )
+          .whenComplete(
+        () {
+          router.replace(const Auth());
+          state = AuthState.loggedOut(userInitiated: userInitiated);
+        },
       );
 
       // if (result.error == null) {
@@ -146,6 +169,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
       if (result.error == null) {
         //TODO: Navigate to email verification screen
+        _ref.read(routerProvider).navigate(const EmailVerificationRoute());
       } else {
         log(result.error!.message);
       }
@@ -163,6 +187,28 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       if (result.error == null) {
         _saveTokens(result.data!);
       } else {
+        if (result.error!.message == 'email-not-verified') {
+          _ref.read(routerProvider).navigate(const EmailVerificationRoute());
+        }
+        log(result.error!.message);
+      }
+    } on PlatformException catch (e) {
+      if (e.message?.toLowerCase().contains("cancelled") ?? false) return;
+      rethrow;
+    } catch (_) {}
+  }
+
+  Future<void> _verifyEmail(String token) async {
+    try {
+      final result = await _ref.read(
+        verifyEmailProvider(token).future,
+      );
+      if (result.error == null) {
+        _saveTokens(result.data!);
+      } else {
+        // if (result.error!.message == 'email-not-verified') {
+        //   _ref.read(routerProvider).navigate(const EmailVerificationRoute());
+        // }
         log(result.error!.message);
       }
     } on PlatformException catch (e) {

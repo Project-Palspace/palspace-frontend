@@ -1,0 +1,70 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tbd/models/login.dart';
+import 'package:tbd/providers/auth.dart';
+
+import '../../routes/router.gr.dart';
+import '../../utils/validation.dart';
+
+final verifyEmailViewModelProvider =
+    ChangeNotifierProvider.autoDispose((ref) => VerifyEmailViewModel(ref));
+
+class VerifyEmailViewModel extends ChangeNotifier {
+  VerifyEmailViewModel(this.ref);
+
+  final Ref ref;
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final formKey = GlobalKey<FormState>();
+  final codeFN = FocusNode();
+  bool _validate = false;
+  bool _loading = false;
+  String? _code;
+
+  bool get validate => _validate;
+  bool get loading => _loading;
+  String? get code => _code;
+
+  AuthStateNotifier get _auth => ref.read(authStateNotifierProvider.notifier);
+
+  void verifyEmail(BuildContext context) async {
+    final form = formKey.currentState!;
+    form.save();
+    if (!form.validate()) {
+      _validate = true;
+      notifyListeners();
+      showInSnackBar(
+          'Please fix the errors in red before submitting.', context);
+    } else {
+      _loading = true;
+      notifyListeners();
+      try {
+        await _auth.verifyEmail(code!).whenComplete(
+          () {
+            if (_auth.isSignedIn) {
+              context.router.replace(const TabScreenRoute());
+            }
+          },
+        );
+      } catch (e) {
+        _loading = false;
+        notifyListeners();
+        print(e);
+        // showInSnackBar('', context); //TODO: show handled error
+      }
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  void setCode(val) {
+    _code = val;
+    notifyListeners();
+  }
+
+  void showInSnackBar(String value, context) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
+  }
+}
