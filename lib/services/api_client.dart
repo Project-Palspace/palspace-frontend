@@ -183,7 +183,7 @@ class AccessInterceptor extends QueuedInterceptor {
   }
 }
 
-class _AgentInterceptor extends Interceptor {
+class AgentInterceptor extends Interceptor {
   @override
   Future<void> onRequest(
     RequestOptions options,

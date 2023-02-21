@@ -17,10 +17,8 @@ final dioProvider = Provider((ref) => Dio(
       ),
     )
       ..httpClientAdapter
-      ..interceptors.addAll([
-        LoggerInterceptor(),
-        AccessInterceptor(ref),
-      ]));
+      ..interceptors.addAll(
+          [LoggerInterceptor(), AccessInterceptor(ref), AgentInterceptor()]));
 
 final apiClientProvider =
     Provider<ApiClient>((ref) => ApiClient(ref.read(dioProvider)));
