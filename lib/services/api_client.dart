@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tbd/models/api_client.dart';
+import 'package:tbd/models/user_details.dart';
 import 'package:tbd/providers/api_client.dart';
 import 'package:tbd/providers/auth.dart';
 import 'package:tbd/services/exceptions.dart';
@@ -99,6 +100,17 @@ class ApiClient {
     );
     return ApiResponse.fromJson(
         response, (json) => LoginResponse.fromJson(json));
+  }
+
+  Future<ApiResponse<UserDetails>> getMyDetails() async {
+    final responseJson = await sentReq(
+      _dio.get<void>('/user/details/'),
+    );
+
+    final response = ApiResponse.fromJson(
+        responseJson, (json) => UserDetails.fromJson(json));
+
+    return response;
   }
 }
 

@@ -96,6 +96,12 @@ class _DebugPageState extends ConsumerState<DebugView> {
             },
             child: const Text('deleter tokens'),
           ),
+          ElevatedButton(
+            onPressed: () async {
+              ref.watch(myDetailsProvider).whenData((value) => print(value));
+            },
+            child: const Text('Get My Details'),
+          ),
         ],
       ),
     );

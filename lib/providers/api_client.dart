@@ -75,3 +75,12 @@ final renewProvider = FutureProvider.autoDispose(
   name: 'renewProvider',
   dependencies: [apiClientProvider],
 );
+
+final myDetailsProvider = FutureProvider.autoDispose(
+  (ref) {
+    final apiService = ref.watch(apiClientProvider);
+    return apiService.getMyDetails();
+  },
+  name: 'myDetailsProvider',
+  dependencies: [apiClientProvider],
+);
