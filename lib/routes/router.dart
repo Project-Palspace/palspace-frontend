@@ -31,7 +31,7 @@ import '../screens/mainscreen.dart';
           page: RegisterView,
         ),
         AutoRoute(
-          path: 'verification',
+          path: 'verification/:code',
           page: EmailVerificationView,
         ),
       ],

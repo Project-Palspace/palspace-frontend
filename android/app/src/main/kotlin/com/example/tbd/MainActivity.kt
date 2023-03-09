@@ -1,4 +1,4 @@
-package com.example.tbd
+package dev.palspace.app
 
 import io.flutter.embedding.android.FlutterActivity
 

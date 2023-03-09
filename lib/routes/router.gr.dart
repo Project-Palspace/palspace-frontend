@@ -59,9 +59,16 @@ class AppRouter extends _i9.RootStackRouter {
       );
     },
     EmailVerificationRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<EmailVerificationRouteArgs>(
+          orElse: () =>
+              EmailVerificationRouteArgs(code: pathParams.optString('code')));
       return _i9.AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const _i5.EmailVerificationView(),
+        child: _i5.EmailVerificationView(
+          code: args.code,
+          key: args.key,
+        ),
       );
     },
     FeedRouter.name: (routeData) {
@@ -132,7 +139,7 @@ class AppRouter extends _i9.RootStackRouter {
             ),
             _i9.RouteConfig(
               EmailVerificationRoute.name,
-              path: 'verification',
+              path: 'verification/:code',
               parent: Auth.name,
             ),
           ],
@@ -251,14 +258,38 @@ class RegisterRoute extends _i9.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.EmailVerificationView]
-class EmailVerificationRoute extends _i9.PageRouteInfo<void> {
-  const EmailVerificationRoute()
-      : super(
+class EmailVerificationRoute
+    extends _i9.PageRouteInfo<EmailVerificationRouteArgs> {
+  EmailVerificationRoute({
+    String? code,
+    _i10.Key? key,
+  }) : super(
           EmailVerificationRoute.name,
-          path: 'verification',
+          path: 'verification/:code',
+          args: EmailVerificationRouteArgs(
+            code: code,
+            key: key,
+          ),
+          rawPathParams: {'code': code},
         );
 
   static const String name = 'EmailVerificationRoute';
+}
+
+class EmailVerificationRouteArgs {
+  const EmailVerificationRouteArgs({
+    this.code,
+    this.key,
+  });
+
+  final String? code;
+
+  final _i10.Key? key;
+
+  @override
+  String toString() {
+    return 'EmailVerificationRouteArgs{code: $code, key: $key}';
+  }
 }
 
 /// generated route for

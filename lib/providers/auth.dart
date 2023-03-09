@@ -63,7 +63,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
     final accessToken = await _tokenRepo.fetchBearerToken();
     if (accessToken == null) {
-      state = const AuthState.loggedOut(userInitiated: null);
+      state = const AuthState.loggedOut(userInitiated: false);
       return;
     }
 
@@ -168,7 +168,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
       if (result.error == null) {
         //TODO: Navigate to email verification screen
-        _ref.read(routerProvider).navigate(const EmailVerificationRoute());
+        _ref.read(routerProvider).navigate(EmailVerificationRoute());
       } else {
         log(result.error!.message);
       }
@@ -188,7 +188,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         state = const AuthState.loggedIn();
       } else {
         if (result.error!.message == 'email-not-verified') {
-          _ref.read(routerProvider).navigate(const EmailVerificationRoute());
+          _ref.read(routerProvider).navigate(EmailVerificationRoute());
         }
         log(result.error!.message);
       }

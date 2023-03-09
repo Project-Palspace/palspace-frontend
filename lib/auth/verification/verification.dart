@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,8 +12,9 @@ import '../../utils/validation.dart';
 import '../../widgets/indicators.dart';
 
 class EmailVerificationView extends ConsumerStatefulWidget {
-  const EmailVerificationView({super.key});
+  const EmailVerificationView({@PathParam('code') this.code, super.key});
 
+  final String? code;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _EmailVerificationState();
@@ -22,8 +24,7 @@ class _EmailVerificationState extends ConsumerState<EmailVerificationView> {
   @override
   Widget build(BuildContext context) {
     VerifyEmailViewModel viewModel = ref.watch(verifyEmailViewModelProvider);
-    var authState = ref.read(authStateNotifierProvider.notifier);
-    TextEditingController _controller = TextEditingController();
+    // var authState = ref.read(authStateNotifierProvider.notifier);
     return LoadingOverlay(
       progressIndicator: circularProgress(context),
       isLoading: viewModel.loading,
@@ -68,20 +69,27 @@ class _EmailVerificationState extends ConsumerState<EmailVerificationView> {
               ),
             ),
             const SizedBox(height: 25.0),
-            buildForm(viewModel, context),
+            buildForm(viewModel, context, widget.code),
           ],
         ),
       ),
     );
   }
 
-  buildForm(VerifyEmailViewModel viewModel, BuildContext context) {
+  buildForm(
+      VerifyEmailViewModel viewModel, BuildContext context, String? code) {
+    TextEditingController _controller = TextEditingController();
+
+    if (code != null) {
+      _controller.text = code;
+    }
     return Form(
       key: viewModel.formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
         children: [
           VerificationFormBuilder(
+            controller: _controller,
             enabled: !viewModel.loading,
             prefix: Ionicons.code, //TODO: replace me
             hintText: "Verification Code",
