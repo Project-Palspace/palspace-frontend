@@ -72,6 +72,7 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
       child: Column(
         children: [
           TextFormBuilder(
+            autocorrect: false,
             enabled: !viewModel.loading,
             prefix: Ionicons.person_outline,
             hintText: "Username",

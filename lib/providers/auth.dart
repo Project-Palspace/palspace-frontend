@@ -87,7 +87,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
     try {
       await _signIn(body);
-      await _afterSignIn();
+      // await _afterSignIn();
     } on PlatformException catch (e) {
       log('Error occured when signing in: $e');
       state = const AuthState.loggedOut(userInitiated: false);
@@ -112,14 +112,12 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     try {
       await _logout(userInitiated);
     } on DioExceptions catch (e) {
+      print(e);
       if (e.status != 504) {
         state = AuthState.loggedOut(userInitiated: userInitiated);
       }
     }
     state = AuthState.loggedOut(userInitiated: userInitiated);
-    await Future.wait<void>([
-      _tokenRepo.deleteTokensData(),
-    ]);
   }
 
   void _assertInitialized() {
@@ -129,7 +127,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   Future<void> _afterSignIn() async {
     try {
       // final profile = await getProfile(ref: _ref);
-      // state = const AuthState.loggedIn();
+      state = const AuthState.loggedIn();
       print('signed in flow');
     } on DioExceptions {
       state = const AuthState.loggedOut(userInitiated: false);
@@ -139,16 +137,17 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   Future<void> _logout(userInitiated) async {
     final router = _ref.watch(routerProvider);
     try {
-      await _ref
-          .read(
+      final response = await _ref.read(
         logoutProvider.future,
-      )
-          .whenComplete(
-        () {
-          router.replace(const Auth());
-          state = AuthState.loggedOut(userInitiated: userInitiated);
-        },
       );
+
+      print(response);
+      //     .whenComplete(
+      //   () {
+      //     router.replace(const Auth());
+      //     state = AuthState.loggedOut(userInitiated: userInitiated);
+      //   },
+      // );
 
       // if (result.error == null) {
       //   //TODO: Navigate to email verification screen
@@ -186,6 +185,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       );
       if (result.error == null) {
         _saveTokens(result.data!);
+        state = const AuthState.loggedIn();
       } else {
         if (result.error!.message == 'email-not-verified') {
           _ref.read(routerProvider).navigate(const EmailVerificationRoute());
@@ -205,6 +205,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       );
       if (result.error == null) {
         _saveTokens(result.data!);
+        state = const AuthState.loggedIn();
       } else {
         // if (result.error!.message == 'email-not-verified') {
         //   _ref.read(routerProvider).navigate(const EmailVerificationRoute());

@@ -28,7 +28,7 @@ class LoginViewModel extends ChangeNotifier {
   String? get email => _email;
   String? get password => _password;
 
-  AuthStateNotifier get _auth => ref.read(authStateNotifierProvider.notifier);
+  AuthStateNotifier get _auth => ref.watch(authStateNotifierProvider.notifier);
 
   void login(BuildContext context) async {
     final form = formKey.currentState!;

@@ -29,7 +29,7 @@ class ApiClient {
   Future<Map<String, dynamic>> sentReq(Future<Response> req) async {
     try {
       final response = await req;
-
+      print(response);
       return response.data ?? {};
     } on DioError catch (e) {
       final error = DioExceptions.fromDioError(e);
@@ -45,6 +45,7 @@ class ApiClient {
     );
 
     final response = ApiResponse.fromJson(responseJson, (json) => json);
+    print(response);
 
     return response;
   }
@@ -58,7 +59,7 @@ class ApiClient {
     );
 
     final response = ApiResponse.fromJson(responseJson, (json) => json);
-
+    print(response);
     return response;
   }
 

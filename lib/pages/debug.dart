@@ -87,6 +87,15 @@ class _DebugPageState extends ConsumerState<DebugView> {
             },
             child: const Text('Get DeviceInfo'),
           ),
+          ElevatedButton(
+            onPressed: () async {
+              final tokenRepo = ref.watch(tokenRepositoryProvider);
+              await Future.wait<void>([
+                tokenRepo.deleteTokensData(),
+              ]);
+            },
+            child: const Text('deleter tokens'),
+          ),
         ],
       ),
     );
